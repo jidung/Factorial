@@ -12,15 +12,13 @@ unsigned int PrintFactorialPlain (unsigned int givenInt) {
 unsigned int PrintFactorialRecursive (unsigned int givenInt) {
 
     if (givenInt >= 2)
-        givenInt *= PrintFactorialRecursive (givenInt - 1);
+        return givenInt * PrintFactorialRecursive (givenInt - 1);
     else if (givenInt == 1) // terminate condition
         return givenInt;
     else {
         std::cout << "This can't be true" << std::endl;
         return 0;   // error
     }
-    
-    return givenInt;
 }
 
 int main () 
