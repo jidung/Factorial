@@ -21,6 +21,18 @@ unsigned int PrintFactorialRecursive (unsigned int givenInt) {
     }
 }
 
+template <unsigned int N> class TMPFactorial
+{
+    public :
+        enum { GetValue = N * TMPFactorial<N - 1>::GetValue };
+};
+
+template <> class TMPFactorial<1> // base case
+{
+    public :
+        enum { GetValue = 1 };
+};
+
 int main () 
 {
     unsigned int result;
@@ -28,9 +40,13 @@ int main ()
     std::cout << "Input an integer" << std::endl;
     std::cin >> inputInteger;
 
+    const unsigned int hardcodedInteger = 30;   // Template metaprogramming can't accept user input
+
     result = PrintFactorialPlain (inputInteger);
+    std::cout << result << std::endl;
     result = PrintFactorialRecursive (inputInteger);
-    
+    std::cout << result << std::endl;
+    result = TMPFactorial<hardcodedInteger>::GetValue;
     std::cout << result << std::endl;
     
     return 0;
