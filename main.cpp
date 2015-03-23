@@ -7,24 +7,20 @@
 
 #include <iostream>
 
-unsigned long long int PrintFactorialPlain (unsigned short const& givenInt) {
+void PrintFactorialPlain (unsigned short const& givenInt) {
+
+    unsigned long long int result = givenInt;
     
-    unsigned long long int result;
-
-    result = givenInt;
-
     for (unsigned int i = givenInt - 1; i >= 1; --i) {
         result *= i;
     }
 
-    return result;
+    std::cout << "Iteration with unsigned long long int (over 20! will generate overflow in 64bit system): " << givenInt << "! = " << result << std::endl;
 }
 
 unsigned long long int PrintFactorialRecursive (unsigned short const& givenInt) {
 
-    unsigned long long int result;
-
-    result = givenInt;
+    unsigned long long int result = givenInt;
     
     if (result >= 2)
         return result * PrintFactorialRecursive (givenInt - 1);
@@ -49,51 +45,49 @@ template <> class TMPFactorial<1> // base case
 };
 
 void printBigFactorial (unsigned short const& givenInt) {
-    const int limit = 1000;
-    const int base = 10;
+    const int limit = 10000;    // limit of number of digits
+    const int base = 10;        // using decimal system
 
-    unsigned int digits[limit+1] = {0};
-
-    int carry, d = 0;   // assistants during multiplication
-    int last, j;    // indices to the big number's digits
+    unsigned int digits[limit] = {0};
+    unsigned int carry, d = 0;  // assistants during multiplication
+    unsigned int last = 0;      // indice to the big number's last (highest) digit
 
     char text[limit+1] = {0};
-
     const char type_digits[10] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
-    digits[1] = 1;
-    last = 1;
+    digits[0] = 1;  // init value
     
-    for (int i = 1; i <= givenInt; ++i) {
+    for (unsigned int i = 1; i <= givenInt; ++i) {
         carry = 0;
-        for (j = 1; j <= last; ++j) {
+
+        // multiply by digits by digits. add carry from the multiplication right before
+        for (unsigned int j = 0; j <= last; ++j) {
             d = digits[j] * i + carry;
-            digits[j] = d % base;
+            digits[j] = d % base;       
             carry = d / base;
         }
         
+        // if carry remained, add more digits to the number out of carry
         while (carry > 0) {
-            if (last >= limit) {
+            if (last >= limit)
                 std::cout << "overflow" << std::endl;
-            }
             last += 1;
             digits[last] = carry % base;
             carry = carry / base;
         }
 
-        for (j = 1; j <= last; ++j) {
-            text[limit - j + 1] = type_digits[digits[j]];   // reversing digits order
+        // reversing digits to correct order
+        for (unsigned int j = 0; j <= last; ++j) {
+            text[limit - j] = type_digits[digits[j]];   
         }
     }
-       
-    std::cout << givenInt << "! = ";
     
-    for (int i = 0; i < limit + 1; ++i) {
+    // print the number digit by digit
+    std::cout << "Iteration with arbitrary size integer notation (limit set to 10000 digits): " << givenInt << "! = ";
+    for (unsigned int i = 0; i < limit; ++i) {
         std::cout << text[i];
     }
-
     std::cout << std::endl;
-
 }
 
 
@@ -101,20 +95,25 @@ int main ()
 {
     unsigned long long int result;
     unsigned short inputInteger;
-    std::cout << "Input an integer" << std::endl;
+    std::cout << "Input an integer: " << std::endl;
     std::cin >> inputInteger;
 
-    // 20! is the largest number can be calculated with 64bit word integer
+    // 20! is the largest number can be calculated with 64bit word unsigned long long integer
     const unsigned long long int hardcodedInteger = 20;   // Template metaprogramming can't accept user input
 
-    result = PrintFactorialPlain (inputInteger);
-    std::cout << "Iteration with unsigned long long int (over 20! will generate overflow in 64bit system): \n" <<  inputInteger << " = " << result << std::endl;
+    // Iteration
+    PrintFactorialPlain (inputInteger);
+
+    // Recursion
     result = PrintFactorialRecursive (inputInteger);
-    std::cout << "Recursion with unsigned long long int (over 20! will generate overflow in 64bit system): \n" << inputInteger << " = " << result << std::endl;
+    std::cout << "Recursion with unsigned long long int (over 20! will generate overflow in 64bit system): " << inputInteger << "! = " << result << std::endl;
+   
+    // Template Metaprogramming
     result = TMPFactorial<hardcodedInteger>::GetValue;
-    std::cout << "Template Metaprogramming with unsigned long long int (over 20! will generate overflow in 64bit system): \n" << "hardcoded integer " << hardcodedInteger << "! = " << result << std::endl;
-    
-    std::cout << "Iteration with arbitrary size integer notation (limit set to 1000 digits or 450!): \n";
+    std::cout << "Template Metaprogramming with unsigned long long int (over 20! will generate overflow in 64bit system): (hardcoded integer) " 
+              << hardcodedInteger << "! = " << result << std::endl;    
+
+    // Iteration with Big Integer
     printBigFactorial (inputInteger);
     
     return 0;
