@@ -12,5 +12,5 @@
   2. Simple Recursion
   3. Template Metaprogramming
   4. Simple Iteration with Big Integer support
-- To use template metaprogramming as you want, edit ""hardcodedInteger"" variable ""in main.cpp""
+- To use template metaprogramming as you want, edit 'hardcodedInteger' variable 'in main.cpp'
 - Number 1, 2, 3 can't represent factorials larger than 20!
